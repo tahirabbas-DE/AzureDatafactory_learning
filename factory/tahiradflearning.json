@@ -1,0 +1,9 @@
+{
+	"name": "tahiradflearning",
+	"location": "malaysiawest",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1bd2a190-088b-404f-8f66-d9a2eebff863",
+		"tenantId": "5cd4f968-b094-453c-a42a-228161e01275"
+	}
+}
