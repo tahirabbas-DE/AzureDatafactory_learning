@@ -31,7 +31,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "select * from @{pipeline().parameters.shema}.@{pipeline().parameters.table}\nwhere @{pipeline().parameters.cdc}>=activity('lookup_incremental_date').output.value[0]['cdc']",
+							"value": "select * from @{pipeline().parameters.shema}.@{pipeline().parameters.table}\nwhere @{pipeline().parameters.cdc}>='@{activity('lookup_incremental_date').output.value[0].cdc}'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
