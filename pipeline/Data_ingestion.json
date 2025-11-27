@@ -136,6 +136,8 @@
 			{
 				"name": "If_new_data",
 				"type": "IfCondition",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "copy_azureSQL",
@@ -176,7 +178,10 @@
 										}
 									}
 								],
-								"scriptBlockExecutionTimeout": "02:00:00"
+								"scriptBlockExecutionTimeout": "02:00:00",
+								"logSettings": {
+									"logDestination": "ExternalStore"
+								}
 							}
 						},
 						{
