@@ -1,0 +1,160 @@
+{
+	"name": "OnPremSQL_to_Databricks",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.input_param",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "CopyOnPremSQL",
+							"type": "Copy",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
+							"dependsOn": [
+								{
+									"activity": "Lookup_date",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "output_file_name",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "select * from @{item().schema}.@{item().table}",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "SqlServerTable1",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Lookup_date",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"dataset": {
+									"referenceName": "Json1",
+									"type": "DatasetReference",
+									"parameters": {
+										"container": "bronze",
+										"folder": {
+											"value": "cdc_@{item().table}",
+											"type": "Expression"
+										},
+										"file": "cdc.json"
+									}
+								}
+							}
+						},
+						{
+							"name": "output_file_name",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "output_var",
+								"value": {
+									"value": "concat(@{item().table},\"_\",@{utcNow()}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"input_param": {
+				"type": "array",
+				"defaultValue": [
+					{
+						"schema": "dbo",
+						"table": "DimUser",
+						"cdc_col": "updated_at"
+					},
+					{
+						"schema": "dbo",
+						"table": "DimTrack",
+						"cdc_col": "updated_at"
+					},
+					{
+						"schema": "dbo",
+						"table": "DimDate",
+						"cdc_col": "date"
+					},
+					{
+						"schema": "dbo",
+						"table": "DimArtist",
+						"cdc_col": "updated_at"
+					},
+					{
+						"schema": "dbo",
+						"table": "FactStream",
+						"cdc_col": "stream_timestamp"
+					}
+				]
+			}
+		},
+		"variables": {
+			"output_var": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
