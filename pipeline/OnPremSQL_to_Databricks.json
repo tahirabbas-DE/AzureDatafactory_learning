@@ -312,7 +312,7 @@
 												"parameters": {
 													"container": "bronze",
 													"folder": {
-														"value": "@item().table",
+														"value": "cdc_@{item().table}",
 														"type": "Expression"
 													},
 													"file": "cdc.json"
