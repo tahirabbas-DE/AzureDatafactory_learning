@@ -1,0 +1,6 @@
+{
+	"name": "OnpremSQLIntegration",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
